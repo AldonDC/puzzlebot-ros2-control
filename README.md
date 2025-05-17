@@ -19,7 +19,7 @@
 [📝 Documentación](#-documentación) •
 [⚙️ Configuración](#-configuración-avanzada)
 
-
+---
 <img src="https://github.com/user-attachments/assets/6e485e32-0cec-421d-8fd2-6a5f919c9c2a" alt="PuzzleBot" width="450px">
 
 </div>
