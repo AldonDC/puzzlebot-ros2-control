@@ -19,7 +19,8 @@
 [📝 Documentación](#-documentación) •
 [⚙️ Configuración](#-configuración-avanzada)
 
-<img src="https://github.com/user-attachments/assets/0a89ed5c-7f65-47a1-a0c1-a7e23c7e9249" alt="PuzzleBot" width="450px">
+
+<img src="https://github.com/user-attachments/assets/6e485e32-0cec-421d-8fd2-6a5f919c9c2a" alt="PuzzleBot" width="450px">
 
 </div>
 
