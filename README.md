@@ -26,22 +26,22 @@
 <table>
   <tr>
     <td width="25%" align="center">
-      <img src="https://github.com/user-attachments/assets/1b3d9abd-4280-43cb-b9d5-08e9ce55da1e" width="100"><br>
+      <img src="src/assets/line_following.png" width="100"><br>
       <b>Seguimiento de líneas</b><br>
       Algoritmos avanzados de visión con filtrado HSV adaptativo
     </td>
     <td width="25%" align="center">
-      <img src="https://github.com/user-attachments/assets/4a9c7b0c-78bf-42f3-98ae-9eed8ad6b7c3" width="100"><br>
+      <img src="src/assets/traffic_light.png" width="100"><br>
       <b>Detección de semáforos</b><br>
       Reconocimiento en tiempo real con clasificación por color
     </td>
     <td width="25%" align="center">
-      <img src="https://github.com/user-attachments/assets/e2c3be9b-60c6-41eb-b0dd-2c01a6c47e19" width="100"><br>
+      <img src="src/assets/traffic_signs.png" width="100"><br>
       <b>Detección de señales</b><br>
       Identificación y respuesta a señales de tráfico
     </td>
     <td width="25%" align="center">
-      <img src="https://github.com/user-attachments/assets/c21e5d31-a8b7-409d-b631-8c41c8e8768a" width="100"><br>
+      <img src="src/assets/autonomous_navigation.png" width="100"><br>
       <b>Navegación autónoma</b><br>
       Control PID optimizado para trayectorias precisas
     </td>
