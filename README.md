@@ -168,7 +168,7 @@ puzzlemon
 ### Diagrama de Comunicación entre Nodos
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/ed0a4819-16aa-4392-89c5-3c64835ffd0c" alt="Diagrama de Comunicación entre Nodos" width="800">
+  <img src="https://github.com/user-attachments/assets/eabd04a4-eca7-4160-97aa-8b1b8d63327a" alt="Diagrama de Comunicación entre Nodos" width="800">
 </div>
 
 <div style="background-color: #e3f2fd; padding: 15px; border-radius: 6px; border-left: 4px solid #2196f3; margin: 20px 0;">
