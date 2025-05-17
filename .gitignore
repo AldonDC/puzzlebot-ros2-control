@@ -1,0 +1,23 @@
+# Archivos y directorios generados por ROS 2
+build/
+install/
+log/
+
+# Archivos de caché de Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+
+# Archivos del sistema
+.DS_Store
+.coverage
+htmlcov/
+FETCH_HEAD
+
+# Archivos de entorno
+.env
+.venv
+env/
+venv/
+ENV/
