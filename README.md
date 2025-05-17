@@ -333,7 +333,7 @@ Para configuraciones personalizadas, edita:
         <sub><b>Alfonso Solís Díaz</b></sub>
       </a>
       <br />
-      <sub>Desarrollo principal</sub>
+      <sub></sub>
     </td>
   </tr>
 </table>
