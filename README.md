@@ -81,7 +81,7 @@ puzzlebot
     <td>Ubuntu 20.04/22.04</td>
   </tr>
   <tr>
-    <td><img src="![image](https://github.com/user-attachments/assets/8d2dc5fa-d339-45e4-b12e-f02a92601742)" width="40"></td>
+    <td><img src="https://github.com/user-attachments/assets/8d2dc5fa-d339-45e4-b12e-f02a92601742" width="40"></td>
     <td>ROS 2 Humble/Foxy</td>
   </tr>
   <tr>
