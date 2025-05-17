@@ -131,8 +131,9 @@ puzzlemon
 ### Diagrama de Comunicación entre Nodos
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/fdc8b94a-c3e1-4f35-8f34-5d1d0afad2d5" alt="Diagrama de Comunicación entre Nodos" width="800">
+  <img src="https://github.com/user-attachments/assets/ed0a4819-16aa-4392-89c5-3c64835ffd0c" alt="Diagrama de Comunicación entre Nodos" width="800">
 </div>
+
 
 ### Flujo de Datos y Procesamiento
 
