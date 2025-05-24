@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+
+import sys
+import os
+
+# Agregar el path del paquete
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+# Importar y ejecutar el main
+from control_pkg.line_follower_intersection import main
+
+if __name__ == '__main__':
+    main()
