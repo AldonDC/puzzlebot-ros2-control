@@ -166,12 +166,6 @@ puzzlebot
 # Monitorear tópicos
 puzzlemon
 
-# Lanzar nodos específicos
-./scripts/launch_puzzlebot.sh
-
-# Ejecutar controladores específicos
-ros2 run control_pkg line_follower_intersection
-ros2 run control_pkg traffic_line
 ```
 </div>
 
