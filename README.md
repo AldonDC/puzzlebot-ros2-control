@@ -179,9 +179,111 @@ ros2 run control_pkg traffic_line
 
 ### Diagrama de Comunicación entre Nodos
 
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/eabd04a4-eca7-4160-97aa-8b1b8d63327a" alt="Diagrama de Comunicación entre Nodos" width="800">
-</div>
+```mermaid
+graph TD
+    %% Sensores y Hardware
+    Camera["`📷 **image_raw**
+    Cámara`"]
+    Encoders["`⚙️ **encoders**
+    Encoders`"]
+    
+    %% Nodos de Detección y Percepción
+    DebugVis["`🔍 **debug_visualizer**
+    Visualizador de Debug`"]
+    TrafficDet["`🚦 **traffic_detector**
+    Detector de Semáforos`"]
+    AngularError["`📐 **angular_error_node**
+    Detección de Error Angular
+    (Corrección eje Z)`"]
+    
+    %% Nodos de Control - Básicos
+    LineFollower["`🛣️ **line_follower_controller**
+    Seguidor de Líneas`"]
+    
+    %% Nodos de Control - Nuevos
+    LineIntersection["`🚸 **line_follower_intersection**
+    Navegación en Intersecciones
+    (NUEVO)`"]
+    TrafficLine["`🛤️ **traffic_line**
+    Control Líneas de Tráfico
+    (NUEVO)`"]
+    
+    %% Nodos de Control - Avanzados
+    TrafficLight["`🚥 **traffic_light_controller**
+    Control de Semáforos`"]
+    PIDController["`⚡ **pid_controller_node**
+    Controlador PID
+    (COMPONENTE CRÍTICO)`"]
+    
+    %% Nodos de Planificación
+    PathGen["`🗺️ **path_generator_node**
+    Generador de Trayectorias`"]
+    PathTraffic["`🚧 **path_generator_traffic**
+    Generador Rutas Tráfico`"]
+    
+    %% Nodos de Estado
+    Odometry["`📍 **odometry_node**
+    Nodo de Odometría`"]
+    
+    %% Actuadores
+    CmdVel["`🎯 **cmd_vel**
+    Velocidad`"]
+    
+    %% Conexiones de Sensores
+    Camera --> DebugVis
+    Camera --> TrafficDet
+    Camera --> AngularError
+    Camera --> LineIntersection
+    Camera --> TrafficLine
+    
+    Encoders --> Odometry
+    
+    %% Conexiones de Detección
+    DebugVis -->|debug_image| Camera
+    TrafficDet -->|traffic_light| TrafficLight
+    AngularError -->|angular_error| LineFollower
+    
+    %% Conexiones de Control Básico
+    LineFollower -->|cmd_vel| CmdVel
+    
+    %% Conexiones de Control Nuevos
+    LineIntersection -->|cmd_vel| CmdVel
+    TrafficLine -->|cmd_vel| CmdVel
+    
+    %% Conexiones de Control Avanzado
+    TrafficLight -->|cmd_vel| CmdVel
+    PIDController -->|cmd_vel| CmdVel
+    
+    %% Conexiones de Planificación
+    PathGen -->|target| PIDController
+    PathTraffic -->|target| PIDController
+    Odometry -->|odom| PathGen
+    Odometry -->|odom| PathTraffic
+    Odometry -->|odom| PIDController
+    
+    %% Flujos de información complejos
+    TrafficDet -.->|traffic_state| TrafficLine
+    AngularError -.->|intersection_detected| LineIntersection
+    
+    %% Estilos
+    classDef sensor fill:#90EE90,stroke:#006400,stroke-width:2px,color:#000
+    classDef detection fill:#87CEEB,stroke:#4682B4,stroke-width:2px,color:#000
+    classDef control fill:#FFB6C1,stroke:#DC143C,stroke-width:2px,color:#000
+    classDef planning fill:#DDA0DD,stroke:#8B008B,stroke-width:2px,color:#000
+    classDef critical fill:#FFD700,stroke:#FF8C00,stroke-width:3px,color:#000
+    classDef new fill:#FF6347,stroke:#B22222,stroke-width:3px,color:#fff
+    classDef actuator fill:#98FB98,stroke:#228B22,stroke-width:2px,color:#000
+    
+    %% Aplicar estilos
+    class Camera,Encoders sensor
+    class DebugVis,TrafficDet,AngularError detection
+    class LineFollower,TrafficLight control
+    class LineIntersection,TrafficLine new
+    class PathGen,PathTraffic planning
+    class PIDController critical
+    class Odometry detection
+    class CmdVel actuator
+```
 
 ---
 
