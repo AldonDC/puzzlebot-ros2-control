@@ -7,10 +7,10 @@
 [![Python](https://img.shields.io/badge/Python-3.10-yellow?style=flat-square&logo=python)](https://www.python.org/)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-orange?style=flat-square&logo=ubuntu)](https://ubuntu.com/)
 [![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)]()
-[![Version](https://img.shields.io/badge/Version-1.3.0-informational?style=flat-square)]()
+[![Version](https://img.shields.io/badge/Version-1.4.0-informational?style=flat-square)]()
 
 **Control avanzado para robots móviles PuzzleBot usando ROS 2**  
-*Seguimiento de líneas, detección de señales/semáforos y navegación autónoma*
+*Seguimiento de líneas, navegación en intersecciones, detección de señales/semáforos y navegación autónoma*
 
 [🚀 Inicio rápido](#-inicio-rápido) •
 [📦 Instalación](#-instalación) •
@@ -30,22 +30,27 @@
 
 <table>
   <tr>
-    <td width="25%" align="center">
+    <td width="20%" align="center">
       <img src="src/assets/line_following.png" width="100"><br>
       <b>Seguimiento de líneas</b><br>
       <span style="color:#00796b">Algoritmos avanzados de visión con filtrado HSV adaptativo</span>
     </td>
-    <td width="25%" align="center">
+    <td width="20%" align="center">
+      <img src="src/assets/autonomous_navigation.png" width="100"><br>
+      <b>Navegación en intersecciones</b><br>
+      <span style="color:#ff5722">Detección y navegación inteligente en cruces de líneas</span>
+    </td>
+    <td width="20%" align="center">
       <img src="src/assets/traffic_light.png" width="100"><br>
       <b>Detección de semáforos</b><br>
       <span style="color:#c62828">Reconocimiento en tiempo real con clasificación por color</span>
     </td>
-    <td width="25%" align="center">
+    <td width="20%" align="center">
       <img src="src/assets/traffic_signs.png" width="100"><br>
       <b>Detección de señales</b><br>
       <span style="color:#1565c0">Identificación y respuesta a señales de tráfico</span>
     </td>
-    <td width="25%" align="center">
+    <td width="20%" align="center">
       <img src="src/assets/autonomous_navigation.png" width="100"><br>
       <b>Navegación autónoma</b><br>
       <span style="color:#6a1b9a">Control PID optimizado para trayectorias precisas</span>
@@ -132,8 +137,10 @@ chmod +x scripts/puzzlebot_pro.sh
 | Nodo | Descripción | Tópicos publicados | Tópicos suscritos |
 |------|-------------|-------------------|-------------------|
 | <code style="color:#2e7d32">line_follower_controller</code> | Sigue líneas mediante visión con filtrado HSV adaptativo | `/cmd_vel` | `/line_position` |
+| <code style="color:#ff5722">line_follower_intersection</code> | **NUEVO**: Navegación inteligente en intersecciones y cruces | `/cmd_vel` | `/image_raw`, `/intersection_detected` |
+| <code style="color:#795548">traffic_line</code> | **NUEVO**: Control avanzado para líneas de tráfico y navegación compleja | `/cmd_vel` | `/image_raw`, `/traffic_state` |
 | <code style="color:#c62828">traffic_light_controller</code> | Detecta y responde a semáforos con transiciones suaves | `/cmd_vel` | `/traffic_light` |
-| <code style="color:#0d47a1">sign_response_controller</code> | **NUEVO**: Responde a señales de tráfico detectadas | `/cmd_vel` | `/traffic_sign`, `/odom` |
+| <code style="color:#0d47a1">sign_response_controller</code> | Responde a señales de tráfico detectadas | `/cmd_vel` | `/traffic_sign`, `/odom` |
 | <code style="color:#e65100">pid_controller_node</code> | Control PID optimizado para movimiento preciso | `/cmd_vel` | `/target`, `/odom` |
 | <code style="color:#4527a0">path_generator_node</code> | Genera trayectorias para navegación autónoma | `/target` | `/odom` |
 | <code style="color:#00695c">odometry_node</code> | Cálculo mejorado de posición con fusión de datos | `/odom` | `/encoders` |
@@ -143,7 +150,7 @@ chmod +x scripts/puzzlebot_pro.sh
 | Nodo | Descripción | Tópicos publicados | Tópicos suscritos |
 |------|-------------|-------------------|-------------------|
 | <code style="color:#c62828">traffic_detector</code> | Detecta semáforos con algoritmos robustos | `/traffic_light` | `/image_raw` |
-| <code style="color:#0d47a1">sign_detector</code> | **NUEVO**: Identifica señales de tráfico (STOP, GIVE WAY, etc.) | `/traffic_sign` | `/image_raw` |
+| <code style="color:#0d47a1">sign_detector</code> | Identifica señales de tráfico (STOP, GIVE WAY, etc.) | `/traffic_sign` | `/image_raw` |
 | <code style="color:#2e7d32">angular_error_node</code> | Cálculo optimizado de error angular para navegación precisa | `/angular_error` | `/image_raw` |
 | <code style="color:#6a1b9a">debug_visualizer</code> | Visualización en tiempo real del procesamiento de imágenes | `/debug_image` | `/image_raw` |
 
@@ -161,6 +168,10 @@ puzzlemon
 
 # Lanzar nodos específicos
 ./scripts/launch_puzzlebot.sh
+
+# Ejecutar controladores específicos
+ros2 run control_pkg line_follower_intersection
+ros2 run control_pkg traffic_line
 ```
 </div>
 
@@ -181,6 +192,8 @@ puzzlemon
   <li>Separación clara entre módulos de percepción, control y planificación</li>
   <li>Flujo de datos optimizado para minimizar latencia en operaciones críticas</li>
   <li>Diseño modular que permite añadir o modificar componentes fácilmente</li>
+  <li><strong>Nuevo</strong>: Sistema de detección de intersecciones para navegación avanzada</li>
+  <li><strong>Nuevo</strong>: Controlador especializado para manejo de líneas de tráfico complejas</li>
 </ul>
 </div>
 
@@ -241,11 +254,17 @@ puzzlebot_ws/
 │   ├── control_pkg/
 │   │   ├── __init__.py
 │   │   ├── line_follower_controller.py    # Mejorado con filtrado HSV adaptativo
+│   │   ├── line_follower_intersection.py  # NUEVO: Navegación en intersecciones
+│   │   ├── traffic_line.py               # NUEVO: Control avanzado de líneas de tráfico
 │   │   ├── traffic_light_controller.py    # Actualizado con transiciones suaves
-│   │   ├── sign_response_controller.py    # NUEVO: Respuesta a señales de tráfico
 │   │   ├── pid_controller_node.py         # Control PID optimizado (COMPONENTE CRÍTICO)
 │   │   ├── path_generator_node.py         # Generación de trayectorias básicas
+│   │   ├── path_generator_traffic.py      # Generación de rutas para tráfico
 │   │   └── odometry_node.py               # Mejorado con fusión de datos
+│   ├── scripts/                    # Scripts ejecutables
+│   │   ├── line_follower_controller       # Script para seguimiento básico
+│   │   ├── line_follower_intersection     # Script para navegación en intersecciones
+│   │   └── traffic_line                   # Script para líneas de tráfico
 │   ├── resource/                   # Recursos del paquete
 │   ├── test/                       # Pruebas unitarias
 │   ├── package.xml
@@ -255,7 +274,6 @@ puzzlebot_ws/
 │   ├── detector_pkg/
 │   │   ├── __init__.py
 │   │   ├── traffic_detector.py           # Algoritmo robusto de detección
-│   │   ├── sign_detector.py              # NUEVO: Detector de señales de tráfico
 │   │   ├── angular_error_node.py         # Cálculo optimizado de error angular para corrección en eje Z
 │   │   └── debug_visualizer.py           # Visualización para debug
 │   ├── resource/                   # Recursos del paquete
@@ -272,6 +290,30 @@ puzzlebot_ws/
 ├── LICENSE                         # Licencia MIT
 └── README.md                       # Esta documentación
 ```
+
+### Nuevos componentes de navegación
+
+#### Line Follower Intersection
+<div style="background-color: #fff3e0; padding: 15px; border-radius: 6px; border-left: 4px solid #ff9800; margin: 20px 0;">
+<p><strong>🔶 Funcionalidades del nodo line_follower_intersection:</strong></p>
+<ul>
+  <li>Detección automática de intersecciones y cruces en el camino</li>
+  <li>Algoritmos de decisión para navegación en cruces complejos</li>
+  <li>Mantenimiento de la dirección correcta después de atravesar intersecciones</li>
+  <li>Integración con sensores adicionales para mejorar la precisión</li>
+</ul>
+</div>
+
+#### Traffic Line Controller
+<div style="background-color: #efebe9; padding: 15px; border-radius: 6px; border-left: 4px solid #795548; margin: 20px 0;">
+<p><strong>🔷 Funcionalidades del nodo traffic_line:</strong></p>
+<ul>
+  <li>Manejo especializado de líneas de tráfico con múltiples carriles</li>
+  <li>Detección y respuesta a cambios de carril</li>
+  <li>Integración con sistemas de semáforos para control de flujo</li>
+  <li>Algoritmos avanzados para navegación en entornos de tráfico complejos</li>
+</ul>
+</div>
 
 ### Uso de colores en terminal
 
@@ -311,20 +353,29 @@ Para configuraciones personalizadas, edita:
 </details>
 
 <details>
-<summary><b>👁️ Parámetros de visión</b></summary>
+<summary><b>🚸 Navegación en intersecciones</b></summary>
 <ul>
-  <li><b>Rangos HSV</b>: Personaliza los rangos de color en <code>traffic_detector.py</code> y <code>sign_detector.py</code> para diferentes condiciones de iluminación</li>
-  <li><b>Umbral de detección</b>: Ajusta la sensibilidad de los algoritmos de detección</li>
-  <li><b>Resolución</b>: Modifica la resolución de procesamiento para balancear rendimiento y precisión</li>
+  <li><b>Umbral de detección</b>: Configura la sensibilidad para detectar intersecciones en <code>line_follower_intersection.py</code></li>
+  <li><b>Tiempo de espera</b>: Ajusta los tiempos de pausa en intersecciones para diferentes escenarios</li>
+  <li><b>Algoritmo de decisión</b>: Personaliza la lógica de navegación según tus requerimientos específicos</li>
 </ul>
 </details>
 
 <details>
-<summary><b>🚦 Reconocimiento de señales</b></summary>
+<summary><b>🛣️ Control de líneas de tráfico</b></summary>
 <ul>
-  <li><b>Plantillas de señales</b>: El sistema incluye plantillas para las señales más comunes (STOP, GIVE WAY, direccionales, etc.)</li>
-  <li><b>Umbral de coincidencia</b>: Ajusta la precisión del reconocimiento de señales</li>
-  <li><b>Prioridad de señales</b>: Configura qué señales tienen precedencia cuando múltiples son detectadas</li>
+  <li><b>Detección de carriles</b>: Ajusta los parámetros de detección de múltiples carriles en <code>traffic_line.py</code></li>
+  <li><b>Cambio de carril</b>: Configura la suavidad y velocidad de los cambios de carril</li>
+  <li><b>Prioridades de tráfico</b>: Establece las reglas de prioridad para diferentes situaciones de tráfico</li>
+</ul>
+</details>
+
+<details>
+<summary><b>👁️ Parámetros de visión</b></summary>
+<ul>
+  <li><b>Rangos HSV</b>: Personaliza los rangos de color en <code>traffic_detector.py</code> para diferentes condiciones de iluminación</li>
+  <li><b>Umbral de detección</b>: Ajusta la sensibilidad de los algoritmos de detección</li>
+  <li><b>Resolución</b>: Modifica la resolución de procesamiento para balancear rendimiento y precisión</li>
 </ul>
 </details>
 
@@ -360,16 +411,29 @@ Para configuraciones personalizadas, edita:
 </ul>
 </details>
 
+<details>
+<summary><b>🚸 Problemas con intersecciones</b></summary>
+<ul>
+  <li>Ajusta los parámetros de detección si las intersecciones no se detectan correctamente</li>
+  <li>Verifica que las condiciones de iluminación sean adecuadas para la detección de líneas</li>
+  <li>Calibra los umbrales de color HSV específicamente para tu entorno de prueba</li>
+</ul>
+</details>
+
 ## 🖥️ Demostraciones
 
 <div style="display: flex; gap: 20px; margin: 20px 0;">
   <div style="flex: 1; text-align: center;">
     <img src="src/assets/demo1.gif" alt="Demo 1" width="100%">
-    <p><strong>Seguimiento de línea</strong></p>
+    <p><strong>Seguimiento de línea básico</strong></p>
   </div>
   <div style="flex: 1; text-align: center;">
     <img src="src/assets/demo2.gif" alt="Demo 2" width="100%">
-    <p><strong>Detección de semáforos</strong></p>
+    <p><strong>Navegación en intersecciones</strong></p>
+  </div>
+  <div style="flex: 1; text-align: center;">
+    <img src="src/assets/demo3.gif" alt="Demo 3" width="100%">
+    <p><strong>Control de líneas de tráfico</strong></p>
   </div>
 </div>
 
@@ -390,6 +454,14 @@ Para configuraciones personalizadas, edita:
 
 ## 🔍 Mejoras recientes
 
+### Versión 1.4.0 (Mayo 2025)
+- **Nuevo**: Implementación del nodo `line_follower_intersection.py` para navegación inteligente en intersecciones
+- **Nuevo**: Controlador `traffic_line.py` para manejo avanzado de líneas de tráfico y múltiples carriles
+- **Nuevo**: Scripts ejecutables optimizados para cada tipo de controlador
+- **Mejorado**: Algoritmos de detección de cruces y bifurcaciones en el camino
+- **Optimizado**: Sistema de decisiones para navegación en intersecciones complejas
+- **Añadido**: Capacidad de manejo de múltiples carriles y cambios de carril suaves
+
 ### Versión 1.3.0 (Mayo 2025)
 - **Nuevo**: Implementación del nodo `sign_detector.py` para reconocimiento de señales de tráfico
 - **Nuevo**: Controlador `sign_response_controller.py` para responder adecuadamente a las señales detectadas
@@ -406,6 +478,7 @@ Para configuraciones personalizadas, edita:
   <li>Planificación de rutas dinámicas con evitación de obstáculos</li>
   <li>Mejoras en el rendimiento de detección en condiciones de baja iluminación</li>
   <li>Interfaz gráfica para monitoreo y control en tiempo real</li>
+  <li>Sistema de aprendizaje automático para mejorar la navegación en intersecciones</li>
 </ul>
 </div>
 
