@@ -22,7 +22,8 @@ setup(
             'line_detector = detector_pkg.line_detector:main',
             'traffic_detector = detector_pkg.traffic_detector:main',
             'angular_error_node = detector_pkg.angular_error_node:main',
-            'debug_visualizer = detector_pkg.debug_visualizer:main'
+            'debug_visualizer = detector_pkg.debug_visualizer:main',  # ← COMA AGREGADA
+            'sign_detector = detector_pkg.sign_detector:main',
         ],
     },
 )

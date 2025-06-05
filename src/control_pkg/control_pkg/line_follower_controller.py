@@ -26,10 +26,14 @@ class FollowLineNode(Node):
         self.debug_pub = self.create_publisher(Image, '/debug_image', 10)
         self.bridge = CvBridge()
 
+        # Camera resizing parameters
+        self.camera_height = 240
+        self.camera_width = 420
+
         # PID controller
-        max_yaw = math.radians(60)
-        self.max_thr = 0.2
-        self.yaw_pid = PID(Kp=0.6, Ki=0, Kd=0.1, setpoint=0.0, output_limits=(-max_yaw, max_yaw))
+        max_yaw = math.radians(45)
+        self.max_thr = 0.12
+        self.yaw_pid = PID(Kp=0.62, Ki=0.05, Kd=0.15, setpoint=0.0, output_limits=(-max_yaw, max_yaw))
 
         # Factores de ponderación para la jerarquía de decisión
         self.center_weight = 0.7  # Mayor peso a la centralidad
@@ -65,6 +69,7 @@ class FollowLineNode(Node):
         print(f"\033[1mLanzado\033[0m: {time.strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"\033[1mConfiguración\033[0m: PID(Kp={self.yaw_pid.Kp}, Ki={self.yaw_pid.Ki}, Kd={self.yaw_pid.Kd})")
         print(f"\033[1mVelocidad máxima\033[0m: {self.max_thr} m/s")
+        print(f"\033[1mResolución cámara\033[0m: {self.camera_width}x{self.camera_height}")
         print(f"\033[1mEstratégia\033[0m: Control jerárquico (centro: {self.center_weight}, ángulo: {self.angle_weight})")
         print(f"\033[1mModo seguridad\033[0m: {'Activado' if self.max_line_lost_count > 0 else 'Desactivado'}")
         print("-" * terminal_width)
@@ -103,56 +108,69 @@ class FollowLineNode(Node):
             self.last_status_print = current_time
 
     def image_callback(self, msg):
-        frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-
-        throttle, yaw, line_found = self.follow_line(frame)
-
-        # Lógica para el modo de búsqueda con reversa
-        if not line_found:
-            self.line_lost_count += 1
+        try:
+            frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
             
-            if self.line_lost_count >= self.max_line_lost_count:
-                self.in_search_mode = True
+            # Resize the camera frame to the desired dimensions
+            frame = cv2.resize(frame, (self.camera_width, self.camera_height))
+            
+            throttle, yaw, line_found = self.follow_line(frame)
+
+            # Lógica para el modo de búsqueda con reversa
+            if not line_found:
+                self.line_lost_count += 1
                 
-                # En modo búsqueda, retrocedemos con un patrón variable de giro
-                throttle = self.backup_speed
-                
-                # Actualizamos contador de búsqueda
-                self.search_time_counter += 1
-                if self.search_time_counter >= self.search_interval:
-                    # Cambiar estrategia de búsqueda rotando entre las opciones
-                    self.search_yaw_index = (self.search_yaw_index + 1) % len(self.search_yaw_options)
-                    self.search_time_counter = 0
-                
-                # Aplicar el yaw actual de la estrategia de búsqueda
-                yaw = self.search_yaw_options[self.search_yaw_index]
+                if self.line_lost_count >= self.max_line_lost_count:
+                    self.in_search_mode = True
+                    
+                    # En modo búsqueda, retrocedemos con un patrón variable de giro
+                    throttle = self.backup_speed
+                    
+                    # Actualizamos contador de búsqueda
+                    self.search_time_counter += 1
+                    if self.search_time_counter >= self.search_interval:
+                        # Cambiar estrategia de búsqueda rotando entre las opciones
+                        self.search_yaw_index = (self.search_yaw_index + 1) % len(self.search_yaw_options)
+                        self.search_time_counter = 0
+                    
+                    # Aplicar el yaw actual de la estrategia de búsqueda
+                    yaw = self.search_yaw_options[self.search_yaw_index]
+                    
+                    # Imprimir estado en terminal
+                    info = f"Opción búsqueda: {self.search_yaw_index}/{len(self.search_yaw_options)-1}"
+                    self._print_status("BACKUP", throttle, yaw, info)
+                    
+                    cv2.putText(frame, f"Searching: Backing up (yaw={yaw:.2f})", (10, 90), 
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
+            else:
+                # Si encontramos la línea, reseteamos contadores
+                self.line_lost_count = 0
+                self.in_search_mode = False
+                self.search_time_counter = 0
+                self.search_yaw_index = 1  # Volvemos a la posición central
+                self.last_yaw = yaw  # Guardamos el último yaw válido
                 
                 # Imprimir estado en terminal
-                info = f"Opción búsqueda: {self.search_yaw_index}/{len(self.search_yaw_options)-1}"
-                self._print_status("BACKUP", throttle, yaw, info)
-                
-                cv2.putText(frame, f"Searching: Backing up (yaw={yaw:.2f})", (10, 90), 
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
-        else:
-            # Si encontramos la línea, reseteamos contadores
-            self.line_lost_count = 0
-            self.in_search_mode = False
-            self.search_time_counter = 0
-            self.search_yaw_index = 1  # Volvemos a la posición central
-            self.last_yaw = yaw  # Guardamos el último yaw válido
-            
-            # Imprimir estado en terminal
-            self._print_status("TRACKING", throttle, yaw)
+                self._print_status("TRACKING", throttle, yaw)
 
-        # Publicar comando de movimiento
-        twist = Twist()
-        twist.linear.x = float(throttle)
-        twist.angular.z = float(yaw)
-        self.publisher.publish(twist)
+            # Publicar comando de movimiento
+            twist = Twist()
+            twist.linear.x = float(throttle)
+            twist.angular.z = float(yaw)
+            self.publisher.publish(twist)
 
-        # Publicar imagen procesada para rqt_image_view
-        debug_msg = self.bridge.cv2_to_imgmsg(frame, encoding="bgr8")
-        self.debug_pub.publish(debug_msg)
+            # Resize debug frame before publishing
+            debug_frame = cv2.resize(frame, (self.camera_width, self.camera_height))
+            debug_msg = self.bridge.cv2_to_imgmsg(debug_frame, encoding="bgr8")
+            self.debug_pub.publish(debug_msg)
+
+        except Exception as e:
+            self.get_logger().error(f"Error en callback: {str(e)}")
+            # Comando de seguridad
+            twist = Twist()
+            twist.linear.x = 0.0
+            twist.angular.z = 0.0
+            self.publisher.publish(twist)
 
     def follow_line(self, frame):
         if frame is None:
@@ -294,4 +312,4 @@ def main(args=None):
         print("-" * 80 + "\n")
 
 if __name__ == '__main__':
-    main()
+    main() 
