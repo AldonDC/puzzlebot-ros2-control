@@ -43,20 +43,20 @@ class TrafficSignalDetector(Node):
         self.color_counts = {'red': 0, 'yellow': 0, 'green': 0}
         self.start_time = time.time()
         
-        # Definir rangos de color HSV para semáforo
+        # RANGOS HSV DEFINITIVOS Y ROBUSTOS - ACTUALIZADOS
         # Rojo (debido al círculo del espacio HSV, necesitamos dos rangos para el rojo)
         self.lower_red1 = np.array([0, 100, 100])
         self.upper_red1 = np.array([10, 255, 255])
         self.lower_red2 = np.array([160, 100, 100])
-        self.upper_red2 = np.array([180, 255, 255])
+        self.upper_red2 = np.array([179, 255, 255])  # Cambiado de 180 a 179
         
-        # Amarillo
-        self.lower_yellow = np.array([20, 100, 100])
-        self.upper_yellow = np.array([40, 255, 255])
+        # Amarillo - Rango robusto de Ivan ✔️
+        self.lower_yellow = np.array([18, 80, 80])
+        self.upper_yellow = np.array([35, 255, 255])
         
-        # Verde
-        self.lower_green = np.array([50, 80, 80])
-        self.upper_green = np.array([90, 255, 255])
+        # Verde - Rango robusto actualizado
+        self.lower_green = np.array([40, 70, 70])
+        self.upper_green = np.array([85, 255, 255])
         
         # Colores para terminal
         self.terminal_colors = {
@@ -157,7 +157,7 @@ class TrafficSignalDetector(Node):
         # Convertir a HSV
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         
-        # Crear máscaras para cada color
+        # Crear máscaras para cada color con los rangos robustos actualizados
         mask_red1 = cv2.inRange(hsv, self.lower_red1, self.upper_red1)
         mask_red2 = cv2.inRange(hsv, self.lower_red2, self.upper_red2)
         mask_red = cv2.bitwise_or(mask_red1, mask_red2)

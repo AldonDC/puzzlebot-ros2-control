@@ -129,7 +129,7 @@ def main():
     print("🎯 Analizando modelos para sistema jerárquico")
     
     # Rutas de los modelos
-    primary_model_path = "/home/alfonso/puzzlebot-ros2-control/src/detector_pkg/detector_pkg/Modelo.pt"      # Modelo principal
+    primary_model_path = "/home/alfonso/puzzlebot-ros2-control/src/detector_pkg/detector_pkg/bestLALO.pt"      # Modelo principal
     direction_model_path = "/home/alfonso/puzzlebot-ros2-control/src/detector_pkg/detector_pkg/Modelo3.pt"   # Modelo de direcciones
     
     # Cargar e inspeccionar modelo principal

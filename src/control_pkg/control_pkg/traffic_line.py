@@ -3,6 +3,8 @@
 # PRIORIDAD: SIGUE LÍNEAS - Semáforo solo limita velocidad máxima
 # Ubicación: control_pkg/control_pkg/traffic_line.py
 
+#CODE DE LINE FOLLOWER Y SEMAFORO CORRECTO
+
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image

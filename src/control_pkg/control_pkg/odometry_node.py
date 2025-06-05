@@ -112,10 +112,10 @@ class RobotLocalization(Node):
             # Terminal Output bonito
             self.get_logger().info(
                 "\n📡 Odom Published\n"
-                + "┌" + "─" * 48 + "┐\n"
-                + f"│ 🧭 Posición       →  X: {self.X:6.2f}   Y: {self.Y:6.2f}       │\n"
+                +  "┌" + "─" * 48 +                                              "┐\n"
+                + f"│ 🧭 Posición       →  X: {self.X:6.2f}   Y: {self.Y:6.2f}    │\n"
                 + f"│ 🔄 Orientación    →  θ: {self.Theta:6.2f} rad               │\n"
-                + f"│ 🚗 Velocidad      →  V: {V:6.3f} m/s   W: {W:6.3f} rad/s │\n"
+                + f"│ 🚗 Velocidad      →  V: {V:6.3f} m/s   W: {W:6.3f} rad/s    │\n"
                 + "└" + "─" * 48 + "┘"
             )
 
