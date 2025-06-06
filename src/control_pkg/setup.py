@@ -10,7 +10,12 @@ setup(
         ('share/ament_index/resource_index/packages',
          ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('lib/' + package_name, ['scripts/line_follower_controller', 'scripts/traffic_line', 'scripts/line_follower_intersection']),
+        ('lib/' + package_name, [
+            'scripts/line_follower_controller',
+            'scripts/traffic_line',
+            'scripts/line_follower_intersection',
+        ]),
+        ('share/' + package_name + '/launch', ['launch/puzzlebot.launch.py']),  # ← INCLUIR ARCHIVO DE LANZAMIENTO
     ],
     install_requires=[
         'setuptools',
@@ -32,8 +37,8 @@ setup(
             'pid_controller_node = control_pkg.pid_controller_node:main',
             'traffic_light_controller = control_pkg.traffic_light_controller:main',
             'path_generator_traffic = control_pkg.path_generator_traffic:main',
-            'traffic_line = control_pkg.traffic_line:main',  # ← NUEVO CONTROLADOR INTEGRADO
-            'line_follower_intersection = control_pkg.line_follower_intersection:main',  # ← NUEVO ENTRY POINT
+            'traffic_line = control_pkg.traffic_line:main',
+            'line_follower_intersection = control_pkg.line_follower_intersection:main',
         ],
     },
 )

@@ -189,50 +189,51 @@ class TrafficSignalDetector(Node):
             'green': []
         }
         
-        # Procesar contornos rojos
-        for contour in contours_red:
-            area = cv2.contourArea(contour)
-            if area > 80:  # Filtrar contornos muy pequeños
+        # Parámetros de detección mejorados
+        MIN_AREA = 80  # Área mínima en píxeles
+        MAX_AREA = 5000  # Área máxima en píxeles
+        MIN_CIRCULARITY = 0.7  # Circularidad mínima (más estricto)
+        MIN_RADIUS = 5  # Radio mínimo en píxeles
+        MAX_ASPECT_RATIO = 1.3  # Relación de aspecto máxima (1.0 sería un círculo perfecto)
+        
+        def process_contours(contours, color):
+            for contour in contours:
+                area = cv2.contourArea(contour)
+                
+                # Verificar área mínima y máxima
+                if area < MIN_AREA or area > MAX_AREA:
+                    continue
+                
+                # Encontrar el rectángulo que encierra el contorno
+                rect = cv2.minAreaRect(contour)
+                width, height = rect[1]
+                
+                # Calcular relación de aspecto
+                aspect_ratio = max(width, height) / (min(width, height) + 1e-6)
+                if aspect_ratio > MAX_ASPECT_RATIO:
+                    continue
+                
                 # Encontrar el círculo mínimo que encierra el contorno
                 (x, y), radius = cv2.minEnclosingCircle(contour)
                 center = (int(x), int(y))
                 radius = int(radius)
                 
+                # Verificar radio mínimo
+                if radius < MIN_RADIUS:
+                    continue
+                
                 # Calcular circularidad
                 perimeter = cv2.arcLength(contour, True)
                 circularity = 4 * np.pi * area / (perimeter * perimeter) if perimeter > 0 else 0
                 
-                # Si es suficientemente circular
-                if circularity > 0.6 and radius > 5:
-                    circles['red'].append((center, radius, area))
+                # Verificar circularidad
+                if circularity > MIN_CIRCULARITY:
+                    circles[color].append((center, radius, area))
         
-        # Procesar contornos amarillos
-        for contour in contours_yellow:
-            area = cv2.contourArea(contour)
-            if area > 80:  # Filtrar contornos muy pequeños
-                (x, y), radius = cv2.minEnclosingCircle(contour)
-                center = (int(x), int(y))
-                radius = int(radius)
-                
-                perimeter = cv2.arcLength(contour, True)
-                circularity = 4 * np.pi * area / (perimeter * perimeter) if perimeter > 0 else 0
-                
-                if circularity > 0.6 and radius > 5:
-                    circles['yellow'].append((center, radius, area))
-        
-        # Procesar contornos verdes
-        for contour in contours_green:
-            area = cv2.contourArea(contour)
-            if area > 80:  # Filtrar contornos muy pequeños
-                (x, y), radius = cv2.minEnclosingCircle(contour)
-                center = (int(x), int(y))
-                radius = int(radius)
-                
-                perimeter = cv2.arcLength(contour, True)
-                circularity = 4 * np.pi * area / (perimeter * perimeter) if perimeter > 0 else 0
-                
-                if circularity > 0.6 and radius > 5:
-                    circles['green'].append((center, radius, area))
+        # Procesar contornos para cada color
+        process_contours(contours_red, 'red')
+        process_contours(contours_yellow, 'yellow')
+        process_contours(contours_green, 'green')
         
         return circles
 

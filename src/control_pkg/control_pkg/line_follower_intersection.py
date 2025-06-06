@@ -1,6 +1,8 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
+from std_msgs.msg import String
+from std_msgs.msg import Bool
 from geometry_msgs.msg import Twist
 from cv_bridge import CvBridge
 import cv2
@@ -24,11 +26,22 @@ class FollowLineNode(Node):
         )
         self.subscription = self.create_subscription(Image, '/puzzlebot/camera/image_raw', self.image_callback, qos_profile)
         self.debug_pub = self.create_publisher(Image, '/debug_image', 10)
+        self.intersection_pub = self.create_publisher(String, '/intersection', 10)
+
+        # Navigation enable/disable subscription
+        self.navigation_enabled = True  # Default to enabled
+        self.navigation_enable_sub = self.create_subscription(
+            Bool,
+            '/navigation_enable',
+            self.navigation_enable_callback,
+            10
+        )
+
         self.bridge = CvBridge()
 
         # Camera resizing parameters
-        self.camera_height = 250
-        self.camera_width = 430
+        self.camera_height = 280
+        self.camera_width = 360
 
         # PID controller
         max_yaw = math.radians(45)
@@ -76,7 +89,7 @@ class FollowLineNode(Node):
         
         # ROI para detección de líneas segmentadas
         self.segmented_roi_start = 0.35  # Desde 60% hacia abajo
-        self.segmented_roi_end = 0.8    # Hasta 90% hacia abajo
+        self.segmented_roi_end = 0.95  # Hasta 90% hacia abajo
         
         # Control general
         self.intersection_cooldown = 0
@@ -88,6 +101,12 @@ class FollowLineNode(Node):
         self.frame_count = 0
         self.last_status_print = 0
         self.status_interval = 1.0
+        
+        self.prev_cx = None
+        self.prev_cy = None
+        self.prev_area = None
+        self.lost_count = 0
+        self.max_lost_memory = 5  # Number of frames to keep memory
         
         self._print_header()
 
@@ -209,84 +228,19 @@ class FollowLineNode(Node):
                             cv2.putText(roi_frame, f"{aspect_ratio:.1f}", (x, y - 5), 
                                       cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
         
-        # Buscar líneas horizontales formadas por segmentos rectangulares
-        horizontal_segmented_lines = []
+        # --- NUEVO: Si hay al menos 3 segmentos candidatos, es intersección ---
+        intersection_detected = len(segment_candidates) >= 3
+        horizontal_segmented_lines = []  # No buscamos líneas, solo segmentos
         
-        if len(segment_candidates) >= self.min_segments_in_line:
-            # Agrupar segmentos por altura (Y similar = línea horizontal)
-            y_groups = {}
-            for segment in segment_candidates:
-                cy = segment['center'][1]
-                
-                # Buscar grupo existente dentro de la tolerancia
-                found_group = False
-                for group_y in list(y_groups.keys()):
-                    if abs(cy - group_y) <= self.horizontal_tolerance:
-                        y_groups[group_y].append(segment)
-                        found_group = True
-                        break
-                
-                if not found_group:
-                    y_groups[cy] = [segment]
+        if intersection_detected:
+            cv2.putText(frame, "🛑 INTERSECTION - STOPPING NOW!", 
+                       (10, roi_start + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 3)
             
-            # Analizar cada grupo para ver si forma una línea segmentada
-            for group_y, segments_in_group in y_groups.items():
-                if len(segments_in_group) >= self.min_segments_in_line:
-                    # Ordenar segmentos por X
-                    segments_in_group.sort(key=lambda s: s['center'][0])
-                    
-                    # Verificar distancias entre segmentos consecutivos
-                    valid_line = True
-                    gaps = []
-                    
-                    for i in range(len(segments_in_group) - 1):
-                        # Calcular distancia entre el final de un segmento y el inicio del siguiente
-                        x1_end = segments_in_group[i]['bbox'][0] + segments_in_group[i]['bbox'][2]  # x + width
-                        x2_start = segments_in_group[i + 1]['bbox'][0]
-                        gap = x2_start - x1_end
-                        gaps.append(gap)
-                        
-                        # Si el gap es demasiado grande o negativo (solapamiento), no es válido
-                        if gap < 0 or gap > self.max_segment_gap:
-                            valid_line = False
-                            break
-                    
-                    if valid_line and len(gaps) > 0:
-                        # Calcular la longitud total de la línea
-                        first_segment = segments_in_group[0]
-                        last_segment = segments_in_group[-1]
-                        line_start = first_segment['bbox'][0]
-                        line_end = last_segment['bbox'][0] + last_segment['bbox'][2]
-                        line_length = line_end - line_start
-                        
-                        # Solo considerar líneas que cubran una buena porción del ancho
-                        min_line_length = frame_width * 0.3  # Al menos 30% del ancho del frame
-                        
-                        if line_length >= min_line_length:
-                            horizontal_segmented_lines.append({
-                                'segments': segments_in_group,
-                                'y_position': group_y + roi_start,  # Ajustar coordenada Y al frame completo
-                                'avg_gap': np.mean(gaps) if gaps else 0,
-                                'line_length': line_length,
-                                'num_segments': len(segments_in_group)
-                            })
-                            
-                            # Dibujar línea segmentada detectada
-                            for segment in segments_in_group:
-                                x, y, w, h = segment['bbox']
-                                cv2.rectangle(roi_frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
-                            
-                            # Dibujar línea conectando los segmentos
-                            start_x = line_start
-                            end_x = line_end
-                            line_y = group_y
-                            cv2.line(roi_frame, (start_x, line_y), (end_x, line_y), (0, 255, 0), 4)
-                            
-                            # Texto indicativo
-                            cv2.putText(roi_frame, f"SEGMENTED LINE: {len(segments_in_group)} segments", 
-                                      (start_x, line_y - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                            cv2.putText(roi_frame, f"Length: {line_length:.0f}px", 
-                                      (start_x, line_y + 25), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+            # Publicar mensaje de intersección
+            msg = String()
+            msg.data = "intersection"
+            self.intersection_pub.publish(msg)
+            self.get_logger().info("🔲 Intersection detected and published!")
         
         # Actualizar frame original con ROI procesada
         frame[roi_start:roi_end, :] = roi_frame
@@ -296,13 +250,6 @@ class FollowLineNode(Node):
                    (10, roi_start + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 0), 2)
         cv2.putText(frame, f"Segmented lines: {len(horizontal_segmented_lines)}", 
                    (10, roi_start + 40), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-        
-        # Determinar si se detectó intersección
-        intersection_detected = len(horizontal_segmented_lines) >= 1
-        
-        if intersection_detected:
-            cv2.putText(frame, "🛑 INTERSECTION - STOPPING NOW!", 
-                       (10, roi_start + 60), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 3)
         
         return intersection_detected, horizontal_segmented_lines
 
@@ -326,18 +273,48 @@ class FollowLineNode(Node):
         
         return all_near_bottom and len(contours) < 2
 
+    def navigation_enable_callback(self, msg):
+        """Callback for navigation enable/disable messages"""
+        self.navigation_enabled = msg.data
+        status = "ENABLED" if self.navigation_enabled else "DISABLED"
+        self.get_logger().info(f"Line follower {status}")
+        
+        # If disabled, stop the robot
+        if not self.navigation_enabled:
+            twist = Twist()
+            twist.linear.x = 0.0
+            twist.angular.z = 0.0
+            self.publisher.publish(twist)
+            
+            # Reset search mode and line lost count
+            self.in_search_mode = False
+            self.line_lost_count = 0
+            self.search_time_counter = 0
+            self.search_yaw_index = 1
+
     def image_callback(self, msg):
         try:
+            # Skip processing if navigation is disabled
+            if not self.navigation_enabled:
+                # Still process and publish debug image, but don't control the robot
+                frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+                frame = cv2.resize(frame, (self.camera_width, self.camera_height))
+                
+                # Add navigation disabled indicator
+                cv2.putText(frame, "NAVIGATION DISABLED", (10, 30), 
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 3)
+                
+                # Publish debug frame
+                debug_frame = cv2.resize(frame, (self.camera_width, self.camera_height))
+                debug_msg = self.bridge.cv2_to_imgmsg(debug_frame, encoding="bgr8")
+                self.debug_pub.publish(debug_msg)
+                return
+                
             frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
             frame = cv2.resize(frame, (self.camera_width, self.camera_height))
             
             # Si ya terminamos, no procesar más
             if self.final_stop_triggered:
-                twist = Twist()
-                twist.linear.x = 0.0
-                twist.angular.z = 0.0
-                self.publisher.publish(twist)
-                
                 cv2.putText(frame, "INTERSECTION REACHED - ROBOT STOPPED!", (10, 30), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 3)
                 cv2.putText(frame, "Segmented line intersection detected", (10, 60), 
@@ -365,19 +342,12 @@ class FollowLineNode(Node):
             # PARADA INMEDIATA cuando se detecten segmentos
             if segmented_detected:
                 self.segmented_line_detection_count += 1
-                # INTERSECCIÓN CONFIRMADA INMEDIATAMENTE
                 intersection_confirmed = True
-                
-                if not self.final_stop_triggered:
-                    self.final_stop_triggered = True
-                    self.intersection_cooldown = self.intersection_cooldown_max
-                    
-                    print(f"\n\033[1;35m🔲 SEGMENTOS DETECTADOS - PARADA INMEDIATA\033[0m")
-                    print(f"\033[1;32m📊 Líneas segmentadas encontradas: {len(segmented_lines)}\033[0m")
-                    for i, line in enumerate(segmented_lines):
-                        print(f"\033[1;33m   Línea {i+1}: {line['num_segments']} segmentos, longitud: {line['line_length']:.0f}px\033[0m")
-                    print("\033[1;31m🛑 ROBOT DETENIDO EN INTERSECCIÓN\033[0m")
-                    print("\033[1;32m✅ MISIÓN COMPLETADA\033[0m")
+
+                print(f"\n\033[1;35m🔲 SEGMENTOS DETECTADOS - PUBLICANDO INTERSECCIÓN\033[0m")
+                print(f"\033[1;32m📊 Líneas segmentadas encontradas: {len(segmented_lines)}\033[0m")
+                for i, line in enumerate(segmented_lines):
+                    print(f"\033[1;33m   Línea {i+1}: {line['num_segments']} segmentos, longitud: {line['line_length']:.0f}px\033[0m")
             else:
                 self.segmented_line_detection_count = 0
                 intersection_confirmed = False

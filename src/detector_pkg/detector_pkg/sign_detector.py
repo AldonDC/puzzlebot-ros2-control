@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import Image
+from std_msgs.msg import String  # AGREGADO: Para publicar el nombre de la clase
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
@@ -27,11 +28,15 @@ class SimpleTrafficSignDetector(Node):
             Image, '/puzzlebot/usb_camera/image_raw', self.image_callback, qos_profile)
         
         # Publicar imagen con detecciones para visualización    
-        self.debug_pub = self.create_publisher(Image, '/debug_image', 10)
+        self.debug_pub = self.create_publisher(Image, '/debug_image_sign', 10)
+        
+        # AGREGADO: Publicador para enviar el nombre de la clase detectada
+        self.class_pub = self.create_publisher(String, '/detected_traffic_sign', 10)
+        
         self.bridge = CvBridge()
 
         # MODELO ÚNICO - Actualizar ruta si es necesario
-        self.model_path = '/home/alfonso/puzzlebot-ros2-control/src/detector_pkg/detector_pkg/bestLALO.pt'
+        self.model_path = '/home/serch/puzzlebot_ws/src/detector_pkg/detector_pkg/bestLALO.pt'
         
         self.load_model()
         
@@ -49,13 +54,13 @@ class SimpleTrafficSignDetector(Node):
         self.detection_history = {}
         self.stability_threshold = 2
         
-        # MAPEO DE CLASES EXACTO SEGÚN TU MODELO
+        # MODIFICADO: MAPEO DE CLASES SIN SEMAFORO (clase 4)
         self.traffic_classes = {
             0: "Forward",
             1: "GiveWay", 
             2: "Right",
             3: "Roundabout",
-            4: "Semaforo",
+            # 4: "Semaforo", ELIMINADO
             5: "Stop",
             6: "construction",
             7: "left"
@@ -68,25 +73,25 @@ class SimpleTrafficSignDetector(Node):
         self.aspect_ratio_min = 0.4
         self.aspect_ratio_max = 2.5
         
-        # EMOJIS ACTUALIZADOS PARA CADA SEÑAL DE TU MODELO
+        # MODIFICADO: EMOJIS SIN SEMAFORO
         self.sign_emojis = {
             "Forward": "⬆️",
             "GiveWay": "⚠️",
             "Right": "➡️", 
             "Roundabout": "🔄",
-            "Semaforo": "🚦",
+            # "Semaforo": "🚦", ELIMINADO
             "Stop": "🛑",
             "construction": "🚧",
             "left": "⬅️"
         }
         
-        # COLORES ESPECÍFICOS PARA CADA CLASE
+        # MODIFICADO: COLORES SIN LA CLASE 4
         self.class_colors = {
             0: (0, 255, 0),      # Forward - Verde
             1: (0, 165, 255),    # GiveWay - Naranja
             2: (255, 0, 0),      # Right - Azul
             3: (255, 255, 0),    # Roundabout - Cian
-            4: (0, 255, 255),    # Semaforo - Amarillo
+            # 4: (0, 255, 255),    # Semaforo - Amarillo ELIMINADO
             5: (0, 0, 255),      # Stop - Rojo
             6: (0, 140, 255),    # Construction - Naranja oscuro
             7: (255, 0, 255)     # Left - Magenta
@@ -96,6 +101,11 @@ class SimpleTrafficSignDetector(Node):
         self.total_detections = 0
         self.unique_signs_detected = set()
         self.detection_count_per_class = {name: 0 for name in self.traffic_classes.values()}
+        
+        # AGREGADO: Control para publicación de clases
+        self.last_published_class = None
+        self.last_publish_time = 0
+        self.publish_cooldown = 1.0  # Publicar la misma clase máximo cada 1 segundo
         
         # Imprimir información inicial
         self._print_startup_info()
@@ -150,6 +160,9 @@ class SimpleTrafficSignDetector(Node):
             emoji = self.sign_emojis.get(name, "🚦")
             color_rgb = self.class_colors[class_id]
             print(f"  {class_id:2d}: {emoji} {name:12} (Color: RGB{color_rgb})")
+        print("\033[1;33m  ⚠️  Nota: Clase 4 (Semaforo) ha sido deshabilitada\033[0m")
+        print("-" * 80)
+        print("\033[1m📡 PUBLICANDO CLASES DETECTADAS EN: /detected_traffic_sign\033[0m")
         print("-" * 80)
         print("\033[1m🔍 MONITOREANDO DETECCIONES EN TIEMPO REAL:\033[0m")
         print("-" * 80)
@@ -183,8 +196,8 @@ class SimpleTrafficSignDetector(Node):
                     for i in range(len(xyxy)):
                         class_id = int(cls[i])
                         
-                        # Solo procesar clases conocidas (0-7)
-                        if class_id not in self.traffic_classes:
+                        # MODIFICADO: Ignorar clase 4 (Semaforo) y solo procesar clases conocidas
+                        if class_id == 4 or class_id not in self.traffic_classes:
                             continue
                         
                         x1, y1, x2, y2 = xyxy[i].astype(int)
@@ -255,12 +268,38 @@ class SimpleTrafficSignDetector(Node):
         
         return True
 
+    def publish_detected_class(self, class_name):
+        """AGREGADO: Publica el nombre de la clase detectada"""
+        current_time = time.time()
+        
+        # Verificar si debemos publicar (cooldown y cambio de clase)
+        should_publish = (
+            class_name != self.last_published_class or 
+            current_time - self.last_publish_time > self.publish_cooldown
+        )
+        
+        if should_publish:
+            msg = String()
+            msg.data = class_name
+            self.class_pub.publish(msg)
+            
+            # Actualizar estado de publicación
+            self.last_published_class = class_name
+            self.last_publish_time = current_time
+            
+            # Log en terminal
+            print(f"\n📡 \033[1;35m[PUBLICADO]\033[0m: {class_name} → /detected_traffic_sign")
+
     def process_detections(self, frame):
         """Procesa las detecciones y aplica filtros de estabilidad mejorados"""
         all_detections = self.detect_traffic_signs(frame)
         
         stable_detections = []
         current_time = time.time()
+        
+        # AGREGADO: Para rastrear la detección más confiable
+        best_detection = None
+        best_confidence = 0
         
         for detection in all_detections:
             x1, y1, x2, y2 = detection['bbox']
@@ -290,6 +329,11 @@ class SimpleTrafficSignDetector(Node):
             # Verificar estabilidad
             stable_count = len(self.detection_history[detection_key])
             if stable_count >= self.stability_threshold:
+                
+                # AGREGADO: Actualizar mejor detección
+                if confidence > best_confidence:
+                    best_detection = detection
+                    best_confidence = confidence
                 
                 # Sistema de cooldown mejorado para terminal
                 show_in_terminal = (detection_key not in self.last_detected_signs or 
@@ -340,6 +384,10 @@ class SimpleTrafficSignDetector(Node):
                     self.detection_count_per_class[class_name] += 1
                 
                 stable_detections.append(detection)
+        
+        # AGREGADO: Publicar la mejor detección
+        if best_detection:
+            self.publish_detected_class(best_detection['class_name'])
         
         return stable_detections
 
@@ -456,7 +504,7 @@ class SimpleTrafficSignDetector(Node):
         
         # Panel principal mejorado
         panel_width = 500
-        panel_height = 160
+        panel_height = 180  # MODIFICADO: Aumentado para incluir info de publicación
         info_bg_color = (25, 25, 35)
         border_color = (0, 255, 255)
         
@@ -486,7 +534,7 @@ class SimpleTrafficSignDetector(Node):
         
         info_right = [
             f"Total: {self.total_detections:,}",
-            f"Tipos: {len(self.unique_signs_detected)}/8",
+            f"Tipos: {len(self.unique_signs_detected)}/7",  # MODIFICADO: 7 en lugar de 8
             f"Modelo: bestLALO.pt"
         ]
         
@@ -504,6 +552,12 @@ class SimpleTrafficSignDetector(Node):
         model_status = "✅ ACTIVO" if self.model else "❌ ERROR"
         cv2.putText(frame, f"Estado: {model_status}", (25, 150), 
                    cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 255, 0) if self.model else (0, 0, 255), 1)
+        
+        # AGREGADO: Estado de publicación
+        if self.last_published_class:
+            pub_text = f"📡 Publicando: {self.last_published_class}"
+            cv2.putText(frame, pub_text, (280, 150), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.55, (255, 0, 255), 1)
         
         # Panel de detecciones activas
         if detections:
@@ -574,7 +628,7 @@ class SimpleTrafficSignDetector(Node):
         print(f"\033[1mFrames procesados\033[0m: {self.frame_count:,}")
         print(f"\033[1mVelocidad promedio\033[0m: {self.frame_count / elapsed if elapsed > 0 else 0:.2f} FPS")
         print(f"\033[1mDetecciones totales\033[0m: {self.total_detections:,}")
-        print(f"\033[1mTipos únicos detectados\033[0m: {len(self.unique_signs_detected)}/8")
+        print(f"\033[1mTipos únicos detectados\033[0m: {len(self.unique_signs_detected)}/7")  # MODIFICADO: 7 en lugar de 8
         
         print(f"\033[1mEficiencia de detección\033[0m: {self.total_detections / self.frame_count * 100 if self.frame_count > 0 else 0:.2f}% (detecciones por frame)")
         
@@ -610,8 +664,9 @@ def main(args=None):
         print("\n" + "🚀" * 20)
         print("\033[1;32m[INFO] ✅ SISTEMA INICIADO CORRECTAMENTE!\033[0m")
         print("\033[1;32m[INFO] 📹 Conectado a: /puzzlebot/usb_camera/image_raw\033[0m")
-        print(f"\033[1;32m[INFO] 🎯 Modelo activo: bestLALO.pt (8 clases)\033[0m")
+        print(f"\033[1;32m[INFO] 🎯 Modelo activo: bestLALO.pt (7 clases - sin Semáforo)\033[0m")  # MODIFICADO
         print("\033[1;32m[INFO] 📺 Visualización: rqt_image_view -> /debug_image\033[0m")
+        print("\033[1;32m[INFO] 📡 Publicando clases en: /detected_traffic_sign\033[0m")  # AGREGADO
         print("\033[1;32m[INFO] 🔍 Monitoreo iniciado - Las detecciones aparecerán abajo:\033[0m")
         print("🚀" * 20 + "\n")
         
