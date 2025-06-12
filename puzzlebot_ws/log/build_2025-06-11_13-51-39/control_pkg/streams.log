@@ -1,0 +1,33 @@
+[0.975s] Invoking command in '/home/serch/puzzlebot_ws/src/control_pkg': PYTHONPATH=/home/serch/puzzlebot_ws/build/control_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/serch/puzzlebot_ws/install/control_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/control_pkg build --build-base /home/serch/puzzlebot_ws/build/control_pkg/build install --record /home/serch/puzzlebot_ws/build/control_pkg/install.log --single-version-externally-managed install_data
+[1.162s] running egg_info
+[1.162s] writing ../../build/control_pkg/control_pkg.egg-info/PKG-INFO
+[1.162s] writing dependency_links to ../../build/control_pkg/control_pkg.egg-info/dependency_links.txt
+[1.163s] writing entry points to ../../build/control_pkg/control_pkg.egg-info/entry_points.txt
+[1.163s] writing requirements to ../../build/control_pkg/control_pkg.egg-info/requires.txt
+[1.164s] writing top-level names to ../../build/control_pkg/control_pkg.egg-info/top_level.txt
+[1.164s] reading manifest file '../../build/control_pkg/control_pkg.egg-info/SOURCES.txt'
+[1.165s] writing manifest file '../../build/control_pkg/control_pkg.egg-info/SOURCES.txt'
+[1.165s] running build
+[1.165s] running build_py
+[1.165s] copying control_pkg/line_follower_intersection.py -> /home/serch/puzzlebot_ws/build/control_pkg/build/lib/control_pkg
+[1.166s] running install
+[1.166s] running install_lib
+[1.166s] copying /home/serch/puzzlebot_ws/build/control_pkg/build/lib/control_pkg/line_follower_intersection.py -> /home/serch/puzzlebot_ws/install/control_pkg/lib/python3.10/site-packages/control_pkg
+[1.167s] byte-compiling /home/serch/puzzlebot_ws/install/control_pkg/lib/python3.10/site-packages/control_pkg/line_follower_intersection.py to line_follower_intersection.cpython-310.pyc
+[1.171s] running install_data
+[1.171s] running install_egg_info
+[1.173s] removing '/home/serch/puzzlebot_ws/install/control_pkg/lib/python3.10/site-packages/control_pkg-0.1.0-py3.10.egg-info' (and everything under it)
+[1.173s] Copying ../../build/control_pkg/control_pkg.egg-info to /home/serch/puzzlebot_ws/install/control_pkg/lib/python3.10/site-packages/control_pkg-0.1.0-py3.10.egg-info
+[1.174s] running install_scripts
+[1.188s] Installing line_follower_controller script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.188s] Installing line_follower_intersection script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.189s] Installing odometry_node script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.189s] Installing path_generator_node script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.189s] Installing path_generator_traffic script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.189s] Installing pid_controller_node script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.189s] Installing state_machine script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.189s] Installing traffic_light_controller script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.189s] Installing traffic_line script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.189s] Installing turn_node script to /home/serch/puzzlebot_ws/install/control_pkg/lib/control_pkg
+[1.190s] writing list of installed files to '/home/serch/puzzlebot_ws/build/control_pkg/install.log'
+[1.222s] Invoked command in '/home/serch/puzzlebot_ws/src/control_pkg' returned '0': PYTHONPATH=/home/serch/puzzlebot_ws/build/control_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/serch/puzzlebot_ws/install/control_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/control_pkg build --build-base /home/serch/puzzlebot_ws/build/control_pkg/build install --record /home/serch/puzzlebot_ws/build/control_pkg/install.log --single-version-externally-managed install_data

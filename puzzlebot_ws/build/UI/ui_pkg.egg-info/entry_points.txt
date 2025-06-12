@@ -1,0 +1,3 @@
+[console_scripts]
+monitor_UI = ui_pkg.monitor_UI:main
+

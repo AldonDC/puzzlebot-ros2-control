@@ -1,0 +1,31 @@
+[1.100s] Invoking command in '/home/serch/puzzlebot_ws/src/detector_pkg': PYTHONPATH=/home/serch/puzzlebot_ws/build/detector_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/serch/puzzlebot_ws/install/detector_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/detector_pkg build --build-base /home/serch/puzzlebot_ws/build/detector_pkg/build install --record /home/serch/puzzlebot_ws/build/detector_pkg/install.log --single-version-externally-managed install_data
+[1.289s] running egg_info
+[1.289s] writing ../../build/detector_pkg/detector_pkg.egg-info/PKG-INFO
+[1.289s] writing dependency_links to ../../build/detector_pkg/detector_pkg.egg-info/dependency_links.txt
+[1.289s] writing entry points to ../../build/detector_pkg/detector_pkg.egg-info/entry_points.txt
+[1.290s] writing requirements to ../../build/detector_pkg/detector_pkg.egg-info/requires.txt
+[1.290s] writing top-level names to ../../build/detector_pkg/detector_pkg.egg-info/top_level.txt
+[1.290s] reading manifest file '../../build/detector_pkg/detector_pkg.egg-info/SOURCES.txt'
+[1.291s] writing manifest file '../../build/detector_pkg/detector_pkg.egg-info/SOURCES.txt'
+[1.291s] running build
+[1.291s] running build_py
+[1.291s] copying detector_pkg/sign_detector.py -> /home/serch/puzzlebot_ws/build/detector_pkg/build/lib/detector_pkg
+[1.292s] copying detector_pkg/traffic_detector.py -> /home/serch/puzzlebot_ws/build/detector_pkg/build/lib/detector_pkg
+[1.292s] running install
+[1.292s] running install_lib
+[1.293s] copying /home/serch/puzzlebot_ws/build/detector_pkg/build/lib/detector_pkg/sign_detector.py -> /home/serch/puzzlebot_ws/install/detector_pkg/lib/python3.10/site-packages/detector_pkg
+[1.293s] copying /home/serch/puzzlebot_ws/build/detector_pkg/build/lib/detector_pkg/traffic_detector.py -> /home/serch/puzzlebot_ws/install/detector_pkg/lib/python3.10/site-packages/detector_pkg
+[1.293s] byte-compiling /home/serch/puzzlebot_ws/install/detector_pkg/lib/python3.10/site-packages/detector_pkg/sign_detector.py to sign_detector.cpython-310.pyc
+[1.296s] byte-compiling /home/serch/puzzlebot_ws/install/detector_pkg/lib/python3.10/site-packages/detector_pkg/traffic_detector.py to traffic_detector.cpython-310.pyc
+[1.299s] running install_data
+[1.299s] running install_egg_info
+[1.300s] removing '/home/serch/puzzlebot_ws/install/detector_pkg/lib/python3.10/site-packages/detector_pkg-0.1.0-py3.10.egg-info' (and everything under it)
+[1.300s] Copying ../../build/detector_pkg/detector_pkg.egg-info to /home/serch/puzzlebot_ws/install/detector_pkg/lib/python3.10/site-packages/detector_pkg-0.1.0-py3.10.egg-info
+[1.301s] running install_scripts
+[1.317s] Installing angular_error_node script to /home/serch/puzzlebot_ws/install/detector_pkg/lib/detector_pkg
+[1.317s] Installing debug_visualizer script to /home/serch/puzzlebot_ws/install/detector_pkg/lib/detector_pkg
+[1.317s] Installing line_detector script to /home/serch/puzzlebot_ws/install/detector_pkg/lib/detector_pkg
+[1.318s] Installing sign_detector script to /home/serch/puzzlebot_ws/install/detector_pkg/lib/detector_pkg
+[1.318s] Installing traffic_detector script to /home/serch/puzzlebot_ws/install/detector_pkg/lib/detector_pkg
+[1.318s] writing list of installed files to '/home/serch/puzzlebot_ws/build/detector_pkg/install.log'
+[1.346s] Invoked command in '/home/serch/puzzlebot_ws/src/detector_pkg' returned '0': PYTHONPATH=/home/serch/puzzlebot_ws/build/detector_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/serch/puzzlebot_ws/install/detector_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/detector_pkg build --build-base /home/serch/puzzlebot_ws/build/detector_pkg/build install --record /home/serch/puzzlebot_ws/build/detector_pkg/install.log --single-version-externally-managed install_data

@@ -1,0 +1,22 @@
+[2.944s] Invoking command in '/home/serch/puzzlebot_ws/src/UI': PYTHONPATH=/home/serch/puzzlebot_ws/build/UI/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/serch/puzzlebot_ws/install/UI/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/UI build --build-base /home/serch/puzzlebot_ws/build/UI/build install --record /home/serch/puzzlebot_ws/build/UI/install.log --single-version-externally-managed install_data
+[3.534s] running egg_info
+[3.535s] writing ../../build/UI/UI.egg-info/PKG-INFO
+[3.536s] writing dependency_links to ../../build/UI/UI.egg-info/dependency_links.txt
+[3.536s] writing entry points to ../../build/UI/UI.egg-info/entry_points.txt
+[3.537s] writing requirements to ../../build/UI/UI.egg-info/requires.txt
+[3.537s] writing top-level names to ../../build/UI/UI.egg-info/top_level.txt
+[3.541s] reading manifest file '../../build/UI/UI.egg-info/SOURCES.txt'
+[3.543s] writing manifest file '../../build/UI/UI.egg-info/SOURCES.txt'
+[3.543s] running build
+[3.543s] running build_py
+[3.544s] running install
+[3.544s] running install_lib
+[3.548s] running install_data
+[3.548s] copying launch/puzzlebot.launch.py -> /home/serch/puzzlebot_ws/install/UI/share/UI/launch
+[3.548s] running install_egg_info
+[3.552s] removing '/home/serch/puzzlebot_ws/install/UI/lib/python3.10/site-packages/UI-0.0.0-py3.10.egg-info' (and everything under it)
+[3.553s] Copying ../../build/UI/UI.egg-info to /home/serch/puzzlebot_ws/install/UI/lib/python3.10/site-packages/UI-0.0.0-py3.10.egg-info
+[3.555s] running install_scripts
+[3.599s] Installing monitor_UI script to /home/serch/puzzlebot_ws/install/UI/lib/UI
+[3.600s] writing list of installed files to '/home/serch/puzzlebot_ws/build/UI/install.log'
+[3.666s] Invoked command in '/home/serch/puzzlebot_ws/src/UI' returned '0': PYTHONPATH=/home/serch/puzzlebot_ws/build/UI/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/serch/puzzlebot_ws/install/UI/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/UI build --build-base /home/serch/puzzlebot_ws/build/UI/build install --record /home/serch/puzzlebot_ws/build/UI/install.log --single-version-externally-managed install_data

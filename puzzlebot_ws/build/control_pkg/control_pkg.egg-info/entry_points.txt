@@ -1,0 +1,12 @@
+[console_scripts]
+line_follower_controller = control_pkg.line_follower_controller:main
+line_follower_intersection = control_pkg.line_follower_intersection:main
+odometry_node = control_pkg.odometry_node:main
+path_generator_node = control_pkg.path_generator_node:main
+path_generator_traffic = control_pkg.path_generator_traffic:main
+pid_controller_node = control_pkg.pid_controller_node:main
+state_machine = control_pkg.state_machine:main
+traffic_light_controller = control_pkg.traffic_light_controller:main
+traffic_line = control_pkg.traffic_line:main
+turn_node = control_pkg.turn_node:main
+

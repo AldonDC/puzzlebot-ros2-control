@@ -1,0 +1,3 @@
+[console_scripts]
+monitor_UI = UI.monitor_UI:main
+
