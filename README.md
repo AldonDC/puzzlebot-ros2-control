@@ -148,7 +148,7 @@ ros2 run control_pkg traffic_line
 **Arquitectura**: YOLOv8 Nano personalizado para detección de elementos de tráfico  
 **Tamaño del modelo**: 6.2 MB (optimizado para edge computing)  
 **Precisión general**: 94.2% mAP@0.5  
-**Velocidad de inferencia**: 45 FPS en Jetson Xavier NX
+**Velocidad de inferencia**: 45 FPS en Jetson Nano 2GB 
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/3e4b1553-64f0-454d-9116-aefe9cd5b9b0" alt="Rendimiento del modelo" width="600">
