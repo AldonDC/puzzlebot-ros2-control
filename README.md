@@ -174,11 +174,6 @@ ros2 run control_pkg traffic_line
 | Modelo | Tamaño | Precisión | FPS | Uso en Proyecto |
 |--------|--------|-----------|-----|-----------------|
 | `bestLALO.pt` | 6.2 MB | 94.2% | 45 | **✅ ACTUALMENTE EN USO** |
-| `best.pt` | 14.1 MB | 96.1% | 28 | Backup/Testing |
-| `bestTrafficRObo.pt` | 8.7 MB | 92.8% | 38 | Versión anterior |
-| `Modelo3.pt` | 11.3 MB | 93.5% | 32 | Experimental |
-| `Modelo.pt` | 7.9 MB | 91.2% | 41 | Primera versión |
-| `ModeloTurn.pt` | 5.8 MB | 88.9% | 52 | Especializado en giros |
 
 ## 🔄 Arquitectura del Sistema
 
