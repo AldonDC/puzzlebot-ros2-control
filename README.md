@@ -154,12 +154,22 @@ ros2 run control_pkg traffic_line
   <img src="https://github.com/user-attachments/assets/3e4b1553-64f0-454d-9116-aefe9cd5b9b0" alt="Rendimiento del modelo" width="600">
 </div>
 
-#### **Clases Detectadas**:
-- **Traffic Light Red** (Semáforo Rojo) - Precisión: 96.8%
-- **Traffic Light Yellow** (Semáforo Amarillo) - Precisión: 91.5%
-- **Traffic Light Green** (Semáforo Verde) - Precisión: 94.1%
-- **Stop Sign** (Señal de Alto) - Precisión: 97.2%
-- **Yield Sign** (Señal de Ceda el Paso) - Precisión: 89.3%
+#### **Clases Detectadas**
+
+- **Traffic Light Red** (Semáforo Rojo) - Precisión: **96.8%**
+- **Traffic Light Yellow** (Semáforo Amarillo) - Precisión: **91.5%**
+- **Traffic Light Green** (Semáforo Verde) - Precisión: **94.1%**
+- **Stop Sign** (Señal de Alto) - Precisión: **97.2%**
+- **Yield Sign** (Señal de Ceda el Paso) - Precisión: **89.3%**
+
+- **Forward** (Dirección Recta) - Precisión: **93.4%**
+- **GiveWay** (Ceda el Paso) - Precisión: **91.9%**
+- **Right** (Giro a la Derecha) - Precisión: **95.2%**
+- **Roundabout** (Glorieta) - Precisión: **92.6%**
+- **Stop** (Alto) - Precisión: **96.1%**
+- **Construction** (Zona de Construcción) - Precisión: **90.7%**
+- **Left** (Giro a la Izquierda) - Precisión: **94.5%**
+
 
 #### **Especificaciones del Entrenamiento**:
 - **Dataset**: 15,000 imágenes anotadas manualmente
