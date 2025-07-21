@@ -574,6 +574,6 @@ Agradecemos profundamente su compromiso con la educación en robótica y su cont
 
 <div align="center">
   <a href="https://manchester-robotics.com/" target="_blank">
-    <img src="https://raw.githubusercontent.com/AldonDC/puzzlebot-ros2-control/main/assets/manchester_robotics_logo.png" alt="Manchester Robotics Logo" width="300px">
+    <img src="https://github.com/user-attachments/assets/99d4a5c1-07cf-4772-a91e-afb1f2b83f95" alt="Manchester Robotics Logo" width="300px">
   </a>
 </div>
