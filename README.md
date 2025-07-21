@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10-yellow?style=flat-square&logo=python)](https://www.python.org/)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04-orange?style=flat-square&logo=ubuntu)](https://ubuntu.com/)
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)]()
+[![Status](https://img.shields.io/badge/Status-Finalizado-brightgreen?style=flat-square)]()
 [![Version](https://img.shields.io/badge/Version-1.4.0-informational?style=flat-square)]()
 
 **Control avanzado para robots móviles PuzzleBot usando ROS 2**  
