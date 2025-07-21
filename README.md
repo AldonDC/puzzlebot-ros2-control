@@ -46,7 +46,7 @@
       <span style="color:#c62828">Reconocimiento en tiempo real con clasificación por color (YOLOv8)</span>
     </td>
     <td width="20%" align="center">
-      <img src=puzzlebot_ws/src/assets/traffic_signs.png" width="100"><br>
+      <img src=https://github.com/user-attachments/assets/ae6327fd-fef0-4254-a92c-9226b55442f7" width="100"><br>
       <b>Detección de señales</b><br>
       <span style="color:#1565c0">Identificación y respuesta a señales de tráfico</span>
     </td>
