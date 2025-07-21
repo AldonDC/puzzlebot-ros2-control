@@ -32,27 +32,27 @@
 <table>
   <tr>
     <td width="20%" align="center">
-      <img src="/assets/line_following.png" width="100"><br>
+      <img src="puzzlebot_ws/src/assets/line_following.png" width="100"><br>
       <b>Seguimiento de líneas</b><br>
       <span style="color:#00796b">Algoritmos avanzados de visión con filtrado HSV adaptativo</span>
     </td>
     <td width="20%" align="center">
-      <img src="/assets/autonomous_navigation.png" width="100"><br>
+      <img src="puzzlebot_ws/src/assets/autonomous_navigation.png" width="100"><br>
       <b>Navegación en intersecciones</b><br>
       <span style="color:#ff5722">Detección y navegación inteligente en cruces de líneas</span>
     </td>
     <td width="20%" align="center">
-      <img src="/assets/traffic_light.png" width="100"><br>
+      <img src="puzzlebot_ws/src/assets/traffic_light.png" width="100"><br>
       <b>Detección de semáforos</b><br>
       <span style="color:#c62828">Reconocimiento en tiempo real con clasificación por color (YOLOv8)</span>
     </td>
     <td width="20%" align="center">
-      <img src="/assets/traffic_signs.png" width="100"><br>
+      <img src=puzzlebot_ws/src/assets/traffic_signs.png" width="100"><br>
       <b>Detección de señales</b><br>
       <span style="color:#1565c0">Identificación y respuesta a señales de tráfico</span>
     </td>
     <td width="20%" align="center">
-      <img src="/assets/autonomous_navigation.png" width="100"><br>
+      <img src="puzzlebot_ws/src/assets/autonomous_navigation.png" width="100"><br>
       <b>Control PID Optimizado</b><br>
       <span style="color:#6a1b9a">Trayectorias precisas con componente crítico</span>
     </td>
