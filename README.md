@@ -21,8 +21,7 @@
 [⚙️ Configuración](#-configuración-avanzada)
 
 ---
-<img src="puzzlebot_ws/src/assets/puzzlebot_main.png" alt="PuzzleBot" width="450px">
-
+<img src="https://github.com/user-attachments/assets/0ee7e36d-5c86-45dc-8826-d6534f99b3f8" alt="PuzzleBot" width="450px">
 </div>
 
 ---
