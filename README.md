@@ -567,3 +567,13 @@ INTERSECTION_CONFIG = {
 </ul>
 </details>
 
+## 🙏 Agradecimientos
+
+Este proyecto ha sido desarrollado en colaboración con [**Manchester Robotics**](https://manchester-robotics.com/), quienes proporcionaron la plataforma **PuzzleBot** y un valioso soporte técnico.  
+Agradecemos profundamente su compromiso con la educación en robótica y su contribución significativa a este proyecto académico.
+
+<div align="center">
+  <a href="https://manchester-robotics.com/" target="_blank">
+    <img src="https://raw.githubusercontent.com/AldonDC/puzzlebot-ros2-control/main/assets/manchester_robotics_logo.png" alt="Manchester Robotics Logo" width="300px">
+  </a>
+</div>
