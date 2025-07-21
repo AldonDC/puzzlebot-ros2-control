@@ -152,7 +152,7 @@ ros2 run control_pkg traffic_line
 **Velocidad de inferencia**: 45 FPS en Jetson Xavier NX
 
 <div align="center">
-  <img src="src/assets/model_performance.png" alt="Rendimiento del modelo" width="600">
+  <img src="https://github.com/user-attachments/assets/3e4b1553-64f0-454d-9116-aefe9cd5b9b0" alt="Rendimiento del modelo" width="600">
 </div>
 
 #### **Clases Detectadas**:
