@@ -158,9 +158,7 @@ ros2 run control_pkg traffic_line
 
 - **Traffic Light Red** (Semáforo Rojo) - Precisión: **96.8%**
 - **Traffic Light Yellow** (Semáforo Amarillo) - Precisión: **91.5%**
-- **Traffic Light Green** (Semáforo Verde) - Precisión: **94.1%**
-- **Stop Sign** (Señal de Alto) - Precisión: **97.2%**
-- **Yield Sign** (Señal de Ceda el Paso) - Precisión: **89.3%**
+
 
 - **Forward** (Dirección Recta) - Precisión: **93.4%**
 - **GiveWay** (Ceda el Paso) - Precisión: **91.9%**
